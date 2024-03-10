@@ -37,7 +37,7 @@ func main() {
 
 	fmt.Println()
 	verdadeiro, falso := true, false
-	fmt.Println(verdadeiro && verdadeiro)
+	fmt.Println(verdadeiro)
 	fmt.Println(falso || verdadeiro)
 	fmt.Println(!falso && verdadeiro)
 
