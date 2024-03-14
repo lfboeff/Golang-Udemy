@@ -17,17 +17,25 @@ func Gerar() *cli.App {
 
 	app.Usage = "Busca IPs e Nomes de Servidores na internet"
 
+	flags := []cli.Flag{
+		cli.StringFlag{
+			Name:  "host",
+			Value: "devbook.com.br",
+		},
+	}
+
 	app.Commands = []cli.Command{
 		{
-			Name:  "ip",
-			Usage: "Busca IPs de endereços na internet",
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "host",
-					Value: "devbook.com.br",
-				},
-			},
+			Name:   "ip",
+			Usage:  "Busca IPs de endereços na internet",
+			Flags:  flags,
 			Action: buscarIPs,
+		},
+		{
+			Name:   "servidor",
+			Usage:  "Busca Nomes de Servidores na internet",
+			Flags:  flags,
+			Action: buscaServidores,
 		},
 	}
 
@@ -35,6 +43,7 @@ func Gerar() *cli.App {
 }
 
 func buscarIPs(c *cli.Context) {
+
 	host := c.String("host")
 	fmt.Println(host)
 
@@ -46,4 +55,21 @@ func buscarIPs(c *cli.Context) {
 	for _, ip := range ips {
 		fmt.Println(ip)
 	}
+
+}
+
+func buscaServidores(c *cli.Context) {
+
+	host := c.String("host")
+	fmt.Println(host)
+
+	servidores, err := net.LookupNS(host) // NS = "name server"
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, servidor := range servidores {
+		fmt.Println(servidor.Host)
+	}
+
 }
