@@ -8,5 +8,18 @@ func Gerar() *cli.App {
 	app.Name = "Aplicação de Linha de Comando"
 	app.Usage = "Busca IPs e Nomes de servidor na internet"
 
+	app.Commands = []cli.Command{
+		{
+			Name:  "ip",
+			Usage: "Busca IPs de endereços na internet",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "host",
+					Value: "devbook.com.br",
+				},
+			},
+		},
+	}
+
 	return app
 }
