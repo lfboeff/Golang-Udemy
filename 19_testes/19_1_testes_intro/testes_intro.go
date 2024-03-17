@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	enderecos "my_module/19_1_1_enderecos"
+	enderecos "go_tests_module/19_1_1_enderecos"
 )
 
 func main() {

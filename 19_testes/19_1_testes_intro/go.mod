@@ -1,4 +1,4 @@
-module my_module
+module go_tests_module
 
 go 1.22.1
 
