@@ -33,8 +33,8 @@ func main() {
 
 	http.HandleFunc("/home", home)
 
-	fmt.Println("Escutando na porta 4000...")
-	log.Fatal(http.ListenAndServe(":4000", nil))
+	fmt.Println("Escutando na porta 5000...")
+	log.Fatal(http.ListenAndServe(":5000", nil))
 
 }
 
