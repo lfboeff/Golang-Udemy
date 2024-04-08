@@ -1,0 +1,39 @@
+<!-- HTML = Hyper Text Markup Language -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        h4 {
+            color:cadetblue;
+        }
+        marquee {
+            font-size: 25px;
+        }
+
+    </style>
+</head>
+
+<body>
+    
+    <h2 style="color:darkblue; font-size: 34px; font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">Página Principal do DevBook</h2>
+    
+    <marquee>
+        <h4>Seja bem-vindo, {{.Nome}}!</h4> <!-- Seja bem-vindo, Luís Felipe! -->
+    </marquee>
+
+    <button id="botao">Clique em mim!</button>
+
+    <script>
+        var btn = document.getElementById("botao")
+        btn.onclick = function() {
+            alert("Botão clicado com sucesso!")
+        }
+    </script>
+
+</body>
+</html>
+
