@@ -20,6 +20,8 @@ func Configurar(router *mux.Router) *mux.Router {
 
 	rotas := rotasUsuarios
 
+	rotas = append(rotas, rotaLogin)
+
 	for _, rota := range rotas {
 		router.HandleFunc(rota.URI, rota.Funcao).Methods(rota.Metodo)
 	}
