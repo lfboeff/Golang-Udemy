@@ -1,6 +1,0 @@
-mode: set
-go_tests_module_advanced/19_2_1_formas/formas.go:13.28,15.2 1 0
-go_tests_module_advanced/19_2_1_formas/formas.go:23.38,25.2 1 1
-go_tests_module_advanced/19_2_1_formas/formas.go:27.37,29.2 1 0
-go_tests_module_advanced/19_2_1_formas/formas.go:36.36,38.2 1 1
-go_tests_module_advanced/19_2_1_formas/formas.go:40.35,42.2 1 0
