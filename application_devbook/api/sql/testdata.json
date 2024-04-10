@@ -16,5 +16,11 @@
         "nick": "boeff",
         "email": "boeff@gmail.com",
         "senha": "boeff"
+    },
+    {
+        "nome": "abacaxi",
+        "nick": "bergamota",
+        "email": "limao@gmail.com",
+        "senha": "banana"
     }
 ]

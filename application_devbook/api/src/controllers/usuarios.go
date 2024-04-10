@@ -246,3 +246,79 @@ func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 	respostas.JSON(w, http.StatusNoContent, nil)
 
 }
+
+// SeguirUsuario permite que um usuário siga um outro
+func SeguirUsuario(w http.ResponseWriter, r *http.Request) {
+
+	seguidorID, err := autenticacao.ExtrairUsuarioID(r)
+	if err != nil {
+		respostas.Erro(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	parameters := mux.Vars(r)
+	usuarioASeguirID, err := strconv.ParseUint(parameters["usuarioId"], 10, 64)
+	if err != nil {
+		respostas.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if seguidorID == usuarioASeguirID {
+		respostas.Erro(w, http.StatusForbidden, errors.New("não é possível seguir você mesmo"))
+		return
+	}
+
+	db, err := database.Conectar()
+	if err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repositorioUsuarios := repositorios.NovoRepositorioDeUsuarios(db)
+
+	if err = repositorioUsuarios.Seguir(usuarioASeguirID, seguidorID); err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	respostas.JSON(w, http.StatusNoContent, nil)
+}
+
+// PararDeSeguirUsuario permite que um usuário pare de seguir um outro
+func PararDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
+
+	seguidorID, err := autenticacao.ExtrairUsuarioID(r)
+	if err != nil {
+		respostas.Erro(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	parameters := mux.Vars(r)
+	usuarioPararSeguirID, err := strconv.ParseUint(parameters["usuarioId"], 10, 64)
+	if err != nil {
+		respostas.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if seguidorID == usuarioPararSeguirID {
+		respostas.Erro(w, http.StatusForbidden, errors.New("não é possível parar de seguir você mesmo"))
+		return
+	}
+
+	db, err := database.Conectar()
+	if err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repositorioUsuarios := repositorios.NovoRepositorioDeUsuarios(db)
+
+	if err = repositorioUsuarios.PararDeSeguir(usuarioPararSeguirID, seguidorID); err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	respostas.JSON(w, http.StatusNoContent, nil)
+}
