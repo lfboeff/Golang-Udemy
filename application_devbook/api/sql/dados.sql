@@ -19,3 +19,8 @@ VALUES
 (5, 6);
 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE3MTI3ODYxMjksInVzdWFyaW9JZCI6N30.MCU0mfN8osqkPcL3hWrZb7LWNYavhVZmVVvnFR-BhNg
+
+{
+    "email": "teste@gmail.com",
+    "senha": "boeff"
+}
