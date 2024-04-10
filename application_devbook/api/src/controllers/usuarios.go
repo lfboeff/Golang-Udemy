@@ -6,6 +6,7 @@ import (
 	"api_mod/src/modelos"
 	"api_mod/src/repositorios"
 	"api_mod/src/respostas"
+	"api_mod/src/seguranca"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -92,6 +93,7 @@ func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 	// w.Write([]byte("Buscando todos os usuários..."))
 
 	var nomeOuNick = strings.ToLower(r.URL.Query().Get("usuario"))
+	// fmt.Println(nomeOuNick)
 
 	db, err := database.Conectar()
 	if err != nil {
@@ -109,6 +111,8 @@ func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respostas.JSON(w, http.StatusOK, usuarios)
+
+	// localhost:5000/usuarios?usuario=luis
 
 }
 
@@ -316,6 +320,132 @@ func PararDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
 	repositorioUsuarios := repositorios.NovoRepositorioDeUsuarios(db)
 
 	if err = repositorioUsuarios.PararDeSeguir(usuarioPararSeguirID, seguidorID); err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	respostas.JSON(w, http.StatusNoContent, nil)
+}
+
+// BuscarSeguidores traz todos os seguidores de um usuário
+func BuscarSeguidores(w http.ResponseWriter, r *http.Request) {
+
+	parameters := mux.Vars(r)
+
+	usuarioID, err := strconv.ParseUint(parameters["usuarioId"], 10, 64)
+	if err != nil {
+		respostas.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Conectar()
+	if err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repositorioUsuarios := repositorios.NovoRepositorioDeUsuarios(db)
+
+	seguidores, err := repositorioUsuarios.BuscarSeguidores(usuarioID)
+	if err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	respostas.JSON(w, http.StatusOK, seguidores)
+}
+
+// BuscarSeguindo traz todos os usuários que um determinado usuário está seguindo
+func BuscarSeguindo(w http.ResponseWriter, r *http.Request) {
+
+	parameters := mux.Vars(r)
+
+	usuarioID, err := strconv.ParseUint(parameters["usuarioId"], 10, 64)
+	if err != nil {
+		respostas.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Conectar()
+	if err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repositorioUsuarios := repositorios.NovoRepositorioDeUsuarios(db)
+
+	usuariosSeguidos, err := repositorioUsuarios.BuscarSeguindo(usuarioID)
+	if err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	respostas.JSON(w, http.StatusOK, usuariosSeguidos)
+}
+
+// AtualizarSenha permite atualizar a senha de um usuário
+func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
+
+	usuarioIDNoToken, err := autenticacao.ExtrairUsuarioID(r)
+	if err != nil {
+		respostas.Erro(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	parameters := mux.Vars(r)
+	usuarioIDNaRequest, err := strconv.ParseUint(parameters["usuarioId"], 10, 64)
+	if err != nil {
+		respostas.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if usuarioIDNoToken != usuarioIDNaRequest {
+		respostas.Erro(w, http.StatusForbidden, errors.New("não é possível atualizar a senha de um usuário que não seja o seu"))
+		return
+	}
+
+	bodyRequest, err := io.ReadAll(r.Body)
+	if err != nil {
+		respostas.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var senha modelos.Senha
+
+	if err = json.Unmarshal(bodyRequest, &senha); err != nil {
+		respostas.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Conectar()
+	if err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repositorioUsuarios := repositorios.NovoRepositorioDeUsuarios(db)
+
+	senhaDBComHash, err := repositorioUsuarios.BuscarSenha(usuarioIDNaRequest)
+	if err != nil {
+		respostas.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err = seguranca.VerificarSenha(senhaDBComHash, senha.Atual); err != nil {
+		respostas.Erro(w, http.StatusUnauthorized, errors.New("a senha atual não condiz com a que está salva no banco"))
+		return
+	}
+
+	senhaNovaComHash, err := seguranca.Hash(senha.Nova)
+	if err != nil {
+		respostas.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = repositorioUsuarios.AtualizarSenha(usuarioIDNaRequest, string(senhaNovaComHash)); err != nil {
 		respostas.Erro(w, http.StatusInternalServerError, err)
 		return
 	}
