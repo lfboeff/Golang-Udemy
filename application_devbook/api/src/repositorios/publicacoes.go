@@ -16,7 +16,7 @@ func NovoRepositorioDePublicacoes(db *sql.DB) *PublicacoesRep {
 }
 
 // Criar insere uma publicação no banco de dados
-func (repositorioPublicacoes PublicacoesRep) Criar(publicacao modelos.Publicacao) (uint64, error) {
+func (repositorioPublicacoes *PublicacoesRep) Criar(publicacao modelos.Publicacao) (uint64, error) {
 
 	statement, err := repositorioPublicacoes.db.Prepare("insert into publicacoes (titulo, conteudo, autor_id) values (?, ?, ?)")
 	if err != nil {
