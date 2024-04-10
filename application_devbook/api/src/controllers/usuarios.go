@@ -1,11 +1,14 @@
 package controllers
 
 import (
+	"api_mod/src/autenticacao"
 	"api_mod/src/database"
 	"api_mod/src/modelos"
 	"api_mod/src/repositorios"
 	"api_mod/src/respostas"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -154,6 +157,19 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	usuarioIdNoToken, err := autenticacao.ExtrairUsuarioID(r)
+	if err != nil {
+		respostas.Erro(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if usuarioID != usuarioIdNoToken {
+		respostas.Erro(w, http.StatusForbidden, errors.New("não é possível atualizar um usuário que não seja o seu"))
+		return
+	}
+
+	fmt.Println(usuarioIdNoToken)
+
 	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		respostas.Erro(w, http.StatusUnprocessableEntity, err)
@@ -199,6 +215,17 @@ func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 	usuarioID, err := strconv.ParseUint(parameters["usuarioId"], 10, 64)
 	if err != nil {
 		respostas.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	usuarioIdNoToken, err := autenticacao.ExtrairUsuarioID(r)
+	if err != nil {
+		respostas.Erro(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if usuarioID != usuarioIdNoToken {
+		respostas.Erro(w, http.StatusForbidden, errors.New("não é possível deletar um usuário que não seja o seu"))
 		return
 	}
 
