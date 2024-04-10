@@ -18,6 +18,19 @@ VALUES
 (5, 4),
 (5, 6);
 
+INSERT INTO publicacoes (titulo, conteudo, autor_id)
+VALUES
+("Minha Primeira Publicação", "Hey", 7),
+("Minha Segunda Publicação", "Natália!", 7),
+("Minha Terceira Publicação", "World!", 7),
+("Aloha", "Galeraaaaa!", 7),
+("Publicação do Usuário 1", "Aloha", 1),
+("Publicação do Usuário 2", "Ihul", 2),
+("Publicação do Usuário 3", "Oba", 3);
+
+
+
+
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE3MTI3ODYxMjksInVzdWFyaW9JZCI6N30.MCU0mfN8osqkPcL3hWrZb7LWNYavhVZmVVvnFR-BhNg
 
 {
