@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"webapp_mod/src/router"
 )
@@ -12,6 +13,6 @@ func main() {
 
 	router := router.Gerar()
 
-	http.ListenAndServe(":3000", router)
+	log.Fatal(http.ListenAndServe(":3000", router))
 
 }
