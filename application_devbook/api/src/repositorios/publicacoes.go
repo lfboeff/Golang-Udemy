@@ -184,3 +184,42 @@ func (repositorioPublicacoes *PublicacoesRep) BuscarPorUsuario(usuario_id uint64
 
 	return publicacoes, nil
 }
+
+// Curtir adiciona no banco de dados uma curtida na publicação
+func (repositorioPublicacoes *PublicacoesRep) Curtir(publicacaoID uint64) error {
+
+	statement, err := repositorioPublicacoes.db.Prepare("update publicacoes set curtidas = curtidas + 1 where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(publicacaoID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Descurtir subtrai no banco de dados uma curtida da publicação, caso o número de curtidas seja maior que 0
+func (repositorioPublicacoes *PublicacoesRep) Descurtir(publicacaoID uint64) error {
+
+	statement, err := repositorioPublicacoes.db.Prepare(`
+		update publicacoes set curtidas =
+		case
+			when curtidas > 0 then curtidas - 1
+			else 0
+		end
+		where id = ?`,
+	)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(publicacaoID); err != nil {
+		return err
+	}
+
+	return nil
+}
