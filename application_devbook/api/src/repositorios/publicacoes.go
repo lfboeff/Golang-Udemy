@@ -112,3 +112,75 @@ func (repositorioPublicacoes *PublicacoesRep) BuscarPorID(publicacaoID uint64) (
 
 	return publicacao, nil
 }
+
+// Atualizar altera os dados de uma publicação no banco de dados
+func (repositorioPublicacoes *PublicacoesRep) Atualizar(publicacaoID uint64, publicacao modelos.Publicacao) error {
+
+	statement, err := repositorioPublicacoes.db.Prepare("update publicacoes set titulo = ?, conteudo = ? where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(publicacao.Titulo, publicacao.Conteudo, publicacaoID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Deletar remove uma publicação do banco de dados
+func (repositorioPublicacoes *PublicacoesRep) Deletar(publicacaoID uint64) error {
+
+	statement, err := repositorioPublicacoes.db.Prepare("delete from publicacoes where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(publicacaoID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// BuscarPorUsuario traz do banco de dados todas as publicações de um usuário específico
+func (repositorioPublicacoes *PublicacoesRep) BuscarPorUsuario(usuario_id uint64) ([]modelos.Publicacao, error) {
+
+	rows, err := repositorioPublicacoes.db.Query(`
+		select p.*, u.nick
+		from publicacoes p
+		inner join usuarios u
+		on u.id = p.autor_id
+		where p.autor_id = ?`,
+		usuario_id,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var publicacoes []modelos.Publicacao
+
+	for rows.Next() {
+
+		var publicacao modelos.Publicacao
+
+		if err = rows.Scan(
+			&publicacao.ID,
+			&publicacao.Titulo,
+			&publicacao.Conteudo,
+			&publicacao.AutorID,
+			&publicacao.Curtidas,
+			&publicacao.CriadaEm,
+			&publicacao.AutorNick,
+		); err != nil {
+			return nil, err
+		}
+
+		publicacoes = append(publicacoes, publicacao)
+	}
+
+	return publicacoes, nil
+}
