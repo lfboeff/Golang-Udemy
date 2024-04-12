@@ -14,7 +14,7 @@ func main() {
 
 	router := router.Gerar()
 
-	fmt.Println("Rodando Webapp na porta 7000...")
-	log.Fatal(http.ListenAndServe(":7000", router))
+	fmt.Println("Rodando Webapp na porta 8080...")
+	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
