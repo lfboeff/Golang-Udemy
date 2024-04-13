@@ -13,3 +13,9 @@ func CarregarTelaDeLogin(w http.ResponseWriter, r *http.Request) {
 	// w.Write([]byte("Tela de Login"))
 
 }
+
+// CarregarTelaDeCadastroDeUsuário vai carregar a página de cadastro de usuário
+func CarregarTelaDeCadastroDeUsuário(w http.ResponseWriter, r *http.Request) {
+
+	utils.ExecutarTemplate(w, "cadastro.html", nil)
+}
